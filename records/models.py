@@ -6,6 +6,7 @@ class Account(models.Model):
     def __unicode__(self):
         return u"%s" % self.name
     
+    
 
 class TransactionType(models.Model):
     name = models.CharField(max_length = 100)
@@ -34,4 +35,14 @@ class Transaction(models.Model):
     
     def __unicode__(self):
         return u"%s | $%.2f | %s" % (self.date, self.amount, self.type)
+    
+    
+class Balance(models.Model):
+    account = models.ForeignKey(Account)
+    date = models.DateField()
+    amount = models.FloatField()
+    calculated_on = models.DateTimeField(null = True, blank = True)
+    is_verified = models.BooleanField(default = False)
+    verified_on = models.DateTimeField(null = True, blank = True)
+    
     

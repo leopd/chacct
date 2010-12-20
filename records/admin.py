@@ -17,7 +17,14 @@ class TransactionAdmin(admin.ModelAdmin):
     ordering = ['date']
     list_filter = ['type', 'date']
     
+class BalanceAdmin(admin.ModelAdmin):
+    list_display = ['account', 'date', 'amount', 'is_verified']
+    ordering = ['date', 'account']
+    list_filter = ['account', 'date']
+    date_hierarchy = 'date'
+    
     
 admin.site.register(m.TransactionType, TransactionTypeAdmin)
 admin.site.register(m.Transaction, TransactionAdmin)
+admin.site.register(m.Balance, BalanceAdmin)
 admin.site.register(m.Account)
