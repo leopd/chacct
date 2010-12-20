@@ -24,7 +24,26 @@ class BalanceAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     
     
+    
+    
+class AccountAdmin(admin.ModelAdmin):
+    actions = ['balance_accounts']
+    
+    def balance_accounts(self,request,queryset):
+        num = 0
+        for acct in queryset.all():
+            acct.calculate_balances()
+            num += 1
+        
+        # see http://docs.djangoproject.com/en/dev/ref/contrib/admin/actions/
+        self.message_user(request,"%s account(s) balanced" % num)
+        
+        
+    
+        
+    
+    
 admin.site.register(m.TransactionType, TransactionTypeAdmin)
 admin.site.register(m.Transaction, TransactionAdmin)
 admin.site.register(m.Balance, BalanceAdmin)
-admin.site.register(m.Account)
+admin.site.register(m.Account, AccountAdmin)
