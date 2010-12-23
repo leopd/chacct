@@ -38,7 +38,7 @@ class Account(models.Model):
 
 
 class TransactionType(models.Model):
-    name = models.CharField(max_length = 100)
+    name = models.CharField(max_length = 100, unique = True)
     debitcredit = models.ManyToManyField(Account, through='AccountFraction')
     valid_from = models.DateField(null = True, blank = True)
     valid_until = models.DateField(null = True, blank = True)
