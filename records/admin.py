@@ -25,9 +25,17 @@ class BalanceAdmin(admin.ModelAdmin):
     
     
     
+class BalanceInline(admin.TabularInline):
+    model = m.Balance
+    extra = 0
+    max_num = 50
+    fields = ['date','amount', 'is_verified']
+    readonly_fields = ['date','amount']
+    
     
 class AccountAdmin(admin.ModelAdmin):
     actions = ['balance_accounts']
+    inlines = [BalanceInline]
     
     def balance_accounts(self,request,queryset):
         num = 0

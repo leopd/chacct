@@ -8,6 +8,8 @@ class Account(models.Model):
     def __unicode__(self):
         return u"%s" % self.name
     
+    class Meta:
+        ordering = ['name']
     
     def calculate_balances(self):
         """Creates all the appropriate balance objects on this account
@@ -44,6 +46,9 @@ class TransactionType(models.Model):
     def __unicode__(self):
         return u"%s" % self.name
     
+    class Meta:
+        ordering = ['name']
+        
     def fraction_for(self, account):
         try:
             fraction_obj = AccountFraction.objects.get(transactiontype = self, account = account)
