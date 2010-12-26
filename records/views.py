@@ -1,3 +1,4 @@
+import re
 
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
@@ -5,10 +6,18 @@ from django.contrib.auth.decorators import login_required
 import records.models as m
 
 def _row_from_current_balances(current_balances, date, accounts):
-    
     balances = []
     for acct in accounts:
-        val = current_balances[acct]
+        m = re.match("^(.*) TOTAL",acct.name)
+        if m:
+            prefix = m.group(1)
+            total = 0
+            for a in accounts:
+                if a.name.startswith(prefix):
+                    total += current_balances[a]
+            val = total
+        else:
+            val = current_balances[acct]
         balances.append( round(val,2) )
     row = {'Date': date, 'Balances': balances }
     return row
