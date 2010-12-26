@@ -8,8 +8,12 @@ class FractionInline(admin.TabularInline):
 
 
 class TransactionTypeAdmin(admin.ModelAdmin):
-    inlines = [FractionInline]
+    pass
 
+
+class TransactionDistributionAdmin(admin.ModelAdmin):
+    inlines = [FractionInline]
+    
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['date','amount','type','comment']
@@ -52,6 +56,7 @@ class AccountAdmin(admin.ModelAdmin):
     
     
 admin.site.register(m.TransactionType, TransactionTypeAdmin)
+admin.site.register(m.TransactionDistribution, TransactionDistributionAdmin)
 admin.site.register(m.Transaction, TransactionAdmin)
 admin.site.register(m.Balance, BalanceAdmin)
 admin.site.register(m.Account, AccountAdmin)

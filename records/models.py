@@ -39,9 +39,6 @@ class Account(models.Model):
 
 class TransactionType(models.Model):
     name = models.CharField(max_length = 100, unique = True)
-    debitcredit = models.ManyToManyField(Account, through='AccountFraction')
-    valid_from = models.DateField(null = True, blank = True)
-    valid_until = models.DateField(null = True, blank = True)
                                         
     def __unicode__(self):
         return u"%s" % self.name
@@ -49,6 +46,26 @@ class TransactionType(models.Model):
     class Meta:
         ordering = ['name']
         
+    def fraction_for(self, account):
+        raise NotImplementedError("This is busted")
+        
+        
+class TransactionDistribution(models.Model):
+    """How a transaction type is distributed to accounts.
+    This is time-dependent.
+    """
+    type = models.ForeignKey(TransactionType)
+    debitcredit = models.ManyToManyField(Account, through='AccountFraction')
+    valid_from = models.DateField(null = True, blank = True)
+    valid_until = models.DateField(null = True, blank = True)
+    
+    def __unicode__(self):
+        if self.valid_from or self.valid_until:
+            return u"Distribution for %s (from %s to %s)" % (self.type, self.valid_from, self.valid_until) 
+        else:
+            return u"Distribution for %s (always)" % self.type
+        
+    
     def fraction_for(self, account):
         try:
             fraction_obj = AccountFraction.objects.get(transactiontype = self, account = account)
@@ -58,7 +75,7 @@ class TransactionType(models.Model):
     
     
 class AccountFraction(models.Model):
-    transactiontype = models.ForeignKey(TransactionType)
+    distribution = models.ForeignKey(TransactionDistribution)
     account = models.ForeignKey(Account)
     fraction = models.FloatField()
     
