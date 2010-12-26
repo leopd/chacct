@@ -1,0 +1,21 @@
+
+<h1>Register</h1>
+
+<table border=1>
+    <tr>
+        <th>Date</th>
+        {% for acct in accounts %}
+            <th>{{acct}}</th>
+        {% endfor %}
+    </tr>
+    {% for row in register %}
+        <tr>
+            <td>
+                {{row.Date}}
+            </td>
+            {% for column in row.Balances %}
+                <td>{{column}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
