@@ -23,7 +23,7 @@ def _row_from_current_balances(current_balances, date, accounts):
     return row
                 
 @login_required
-def show_register(self):
+def show_register(request):
     register = []
     current_balances = {}
     for acct in m.Account.objects.all():
@@ -48,6 +48,28 @@ def show_register(self):
                     })
     
     
-    
-    
 
+def calculate_register(request):
+    accts = []
+    balances = {}
+    for acct in m.Account.objects.all():
+        accts.append(acct)
+        balances[acct] = 0.0
+    result = []
+    
+    qs = m.Transaction.objects.all().order_by('date','id')
+    for transaction in qs.iterator():
+        row = {'transaction': transaction, 
+               'Balances': [], 
+               'Deltas': [],
+               }
+        for acct in accts:
+            delta = transaction.amount_for(acct)
+            row['Deltas'].append(delta)
+            balances[acct] += delta
+            row['Balances'].append(balances[acct])
+        result.append(row)
+    return render_to_response("records/register2.html", {
+                            'register': result,
+                            'accounts': accts,
+                    })

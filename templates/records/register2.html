@@ -1,0 +1,39 @@
+<style>
+    .transrow {
+    }
+    .totalrow {
+        background-color: #ccf;
+    }
+</style>
+
+<h1>double-Register</h1>
+
+<table border=1>
+    <tr>
+        <th>Date</th>
+        <th>Transaction</th>
+        {% for acct in accounts %}
+            <th>{{acct}}</th>
+        {% endfor %}
+    </tr>
+    {% for row in register %}
+        <tr class='transrow'>
+            <td>
+                {{row.transaction.date}}
+            </td>
+            <td>
+                {{row.transaction}}
+            </td>
+            {% for column in row.Deltas %}
+                <td>{{column|floatformat:2}}</td>
+            {% endfor %}
+        </tr>
+        <tr class="totalrow">
+            <td> </td>
+            <td> </td>
+            {% for column in row.Balances %}
+                <td>{{column|floatformat:2}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
