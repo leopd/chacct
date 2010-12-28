@@ -4,6 +4,12 @@
     .totalrow {
         background-color: #ccf;
     }
+    .account_details {
+        text-align: right;
+    }
+    .zero {
+        color: #999;
+    }
 </style>
 
 <h1>double-Register</h1>
@@ -24,15 +30,19 @@
             <td>
                 {{row.transaction}}
             </td>
-            {% for column in row.Deltas %}
-                <td>{{column|floatformat:2}}</td>
-            {% endfor %}
-        </tr>
-        <tr class="totalrow">
-            <td> </td>
-            <td> </td>
-            {% for column in row.Balances %}
-                <td>{{column|floatformat:2}}</td>
+            {% for details in row.per_account_details %}
+            <td class="account_details">
+                <div class="transrow">
+                    {% if details.delta %}
+                        {{details.delta}}
+                    {% else %}
+                        <span class="zero">0.00</span>
+                    {% endif %}
+                </div>
+                <div class="totalrow">
+                    {{details.balance}}
+                </div>
+            </td>
             {% endfor %}
         </tr>
     {% endfor %}

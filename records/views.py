@@ -1,3 +1,5 @@
+import logging
+
 import re
 
 from django.shortcuts import render_to_response
@@ -48,6 +50,14 @@ def show_register(request):
                     })
     
     
+def dollar_format(flt, add_plus = False):
+    if flt == 0:
+        return 0
+    str = "%.2f" % flt
+    commas = re.sub("(\d)(?=(\d{3})+\.)","\g<1>,",str)
+    if add_plus and flt > 0:
+        commas = "+" + commas
+    return commas
 
 def calculate_register(request):
     accts = []
@@ -60,15 +70,17 @@ def calculate_register(request):
     qs = m.Transaction.objects.all().order_by('date','id')
     for transaction in qs.iterator():
         row = {'transaction': transaction, 
-               'Balances': [], 
-               'Deltas': [],
+               'per_account_details': [], 
                }
         for acct in accts:
+            details = {}
             delta = transaction.amount_for(acct)
-            row['Deltas'].append(delta)
+            details['delta'] = dollar_format(delta, True)
             balances[acct] += delta
-            row['Balances'].append(balances[acct])
+            details['balance'] = dollar_format(balances[acct])
+            row['per_account_details'].append(details)
         result.append(row)
+        logging.debug(row)
     return render_to_response("records/register2.html", {
                             'register': result,
                             'accounts': accts,
