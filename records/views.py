@@ -62,11 +62,13 @@ def calculate_register(request):
             if match:
                 prefix = match.group(1)
                 total = 0
+                delta = 0
                 for a in accts:
                     if a.name.startswith(prefix):
                         total += balances[a]
+                        delta += deltas[a]
                 details['balance'] = total
-                details['delta'] = None
+                details['delta'] = delta
             else:
                 details['balance'] = balances[acct]
                 details['delta'] = deltas[acct]
