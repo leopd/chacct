@@ -21,33 +21,8 @@ def _row_from_current_balances(current_balances, date, accounts):
         else:
             val = current_balances[acct]
         balances.append( round(val,2) )
-    row = {'Date': date, 'Balances': balances }
     return row
                 
-@login_required
-def show_register(request):
-    register = []
-    current_balances = {}
-    for acct in m.Account.objects.all():
-        current_balances[acct]=0
-    current_balances['Date'] = None
-    last_date = None
-    
-    accounts = m.Account.objects.all()
-    
-    for balance in m.Balance.objects.all().order_by('date'):
-        if balance.date != current_balances['Date']:
-            # Emit a row into register
-            if last_date:
-                row = _row_from_current_balances(current_balances, last_date, accounts)
-                register.append(row)
-            last_date = balance.date
-        current_balances[balance.account] = balance.amount
-        
-    return render_to_response("records/show_register.html", {
-                            'register': register,
-                            'accounts': accounts,
-                    })
     
     
 def dollar_format(flt, add_plus = False):
@@ -59,6 +34,7 @@ def dollar_format(flt, add_plus = False):
         commas = "+" + commas
     return commas
 
+@login_required
 def calculate_register(request):
     accts = []
     balances = {}
@@ -72,12 +48,28 @@ def calculate_register(request):
         row = {'transaction': transaction, 
                'per_account_details': [], 
                }
+        # First pass, apply the transactions
+        deltas = {}
         for acct in accts:
             details = {}
             delta = transaction.amount_for(acct)
-            details['delta'] = dollar_format(delta, True)
             balances[acct] += delta
-            details['balance'] = dollar_format(balances[acct])
+            deltas[acct] = delta
+        # Second pass, output the display and look for TOTAL
+        for acct in accts:
+            details = {}
+            match = re.match("^(.*) TOTAL",acct.name)
+            if match:
+                prefix = match.group(1)
+                total = 0
+                for a in accts:
+                    if a.name.startswith(prefix):
+                        total += balances[a]
+                details['balance'] = total
+                details['delta'] = None
+            else:
+                details['balance'] = balances[acct]
+                details['delta'] = deltas[acct]
             row['per_account_details'].append(details)
         result.append(row)
         logging.debug(row)

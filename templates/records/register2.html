@@ -4,7 +4,7 @@
     .totalrow {
         background-color: #ccf;
     }
-    .account_details {
+    .money {
         text-align: right;
     }
     .zero {
@@ -17,7 +17,9 @@
 <table border=1>
     <tr>
         <th>Date</th>
-        <th>Transaction</th>
+        <th>Transaction Type</th>
+        <th>Comment</th>
+        <th>Amount</th>
         {% for acct in accounts %}
             <th>{{acct}}</th>
         {% endfor %}
@@ -28,19 +30,29 @@
                 {{row.transaction.date}}
             </td>
             <td>
-                {{row.transaction}}
+                {{row.transaction.type}}
+            </td>
+            <td>
+                {{row.transaction.comment}}
+            </td>
+            <td class="money">
+                {{row.transaction.amount|floatformat:2}}
             </td>
             {% for details in row.per_account_details %}
-            <td class="account_details">
+            <td class="money">
                 <div class="transrow">
                     {% if details.delta %}
-                        {{details.delta}}
+                        {% if details.delta > 0 %}+{% endif %}{{details.delta|floatformat:2}}
                     {% else %}
-                        <span class="zero">0.00</span>
+                        {% if details.delta == None %}
+                            &nbsp;
+                        {% else %}
+                            <span class="zero">0.00</span>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="totalrow">
-                    {{details.balance}}
+                    {{details.balance|floatformat:2}}
                 </div>
             </td>
             {% endfor %}
