@@ -1,8 +1,10 @@
 <style>
     .transrow {
     }
-    .totalrow {
+    .deltarow {
         background-color: #ccf;
+    }
+    .totalrow {
     }
     .money {
         text-align: right;
@@ -40,7 +42,7 @@
             </td>
             {% for details in row.per_account_details %}
             <td class="money">
-                <div class="transrow">
+                <div class="deltarow">
                     {% if details.delta %}
                         {% if details.delta > 0 %}+{% endif %}{{details.delta|floatformat:2}}
                     {% else %}
