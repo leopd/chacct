@@ -1,3 +1,16 @@
+"""This defines the data structure for the system.
+Each Class corresponds to a RDBMS table.
+
+There are 6 classes:
+-Account (like Mortgage, Utilities, an owner)
+    -Balance (ephemeral.  Gets blown away and recreated on request.)
+
+-Transaction (money moving on a date)
+    -TransactionType (classifies why the money moved)
+        -TransactionDistribution (describes how the money is distributed to accounts)
+            -AccountFraction (joins Distribution to Account with a percentage)
+
+"""
 import datetime
 import logging
 from django.db import models
@@ -104,6 +117,9 @@ class TransactionDistribution(models.Model):
     
     
 class AccountFraction(models.Model):
+    """This is the many-many join table between Distribution and Account
+    it adds percentage to the association.
+    """
     distribution = models.ForeignKey(TransactionDistribution)
     account = models.ForeignKey(Account)
     fraction = models.FloatField()
