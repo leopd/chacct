@@ -3,7 +3,7 @@ Each Class corresponds to a RDBMS table.
 
 There are 6 classes:
 -Account (like Mortgage, Utilities, an owner)
-    -Balance (ephemeral.  Gets blown away and recreated on request.)
+    -Balance (ephemeral.  Gets blown away and rebuilt on request.)
 
 -Transaction (money moving on a date)
     -TransactionType (classifies why the money moved)
@@ -42,7 +42,7 @@ class Account(models.Model):
 	            b = Balance(account = self,
 	                        amount = running_balance,
 	                        date = transaction.date,
-                            ref_transaction = transaction,
+                                ref_transaction = transaction,
 	                        calculated_on = datetime.datetime.now(),
 	                        )
 	            b.save()
