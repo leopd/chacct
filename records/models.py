@@ -2,7 +2,7 @@
 Each Class corresponds to a RDBMS table.
 
 There are 6 classes:
--Account (like Mortgage, Utilities, an owner)
+-Account (balance in the shared account for each of the owners)
     -Balance (ephemeral.  Gets blown away and rebuilt on request.)
 
 -Transaction (money moving on a date)
@@ -10,6 +10,16 @@ There are 6 classes:
         -TransactionDistribution (describes how the money is distributed to accounts)
             -AccountFraction (joins Distribution to Account with a percentage)
 
+e.g. 
+"Mortgage of $5000 gets deducted on 1/5/2012" = Transaction.
+  -> has one Transaction type = "Mortgage payment"
+        -> matches one Transaction Distribution = Mortgage distribution from (1/1/2011 - present)  "MD2011"
+              -> has many Account Fractions
+                      - MD2011, Owner1 40%
+                      - MD2011, Owner2 35%
+                      - MD2011, Owner3 25%
+
+Note that the DB schema has a one-many relationship between transaction type and transaction distribution, but the date ranges on the TD mean that only one TD matches each transaction.
 """
 import datetime
 import logging
